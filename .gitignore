@@ -1,0 +1,6 @@
+__pycache__
+*.zip
+*.pyc
+*.swp
+local.py
+local.json
