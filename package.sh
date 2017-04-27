@@ -1,2 +1,3 @@
 #! /bin/sh
-zip -r -xi package.zip package.zip ibroadcast-uploader.jar handler.py
+rm package.zip
+zip -r package.zip ibroadcast-uploader.jar handler.py

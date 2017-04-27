@@ -3,6 +3,7 @@ import boto3
 from urllib.parse import unquote_plus
 from subprocess import call
 from pathlib import Path
+from tempfile import mkdtemp
 
 
 def get_bucket_and_key(event):
@@ -13,12 +14,16 @@ def get_bucket_and_key(event):
     return (bucket, key)
 
 
+def get_audiopath(work_dir, key):
+    return Path(mkdtemp(dir=str(work_dir))) / key
+
+
 def download_from_s3(bucket, key, audiopath):
     s3 = boto3.resource('s3')
     s3.meta.client.download_file(bucket, key, str(audiopath))
 
 
-def upload_to_ibroadcast(username, password, work_dir):
+def upload_to_ibroadcast(username, password, audiopath):
     read, write = os.pipe()
     os.write(write, b'U')
     os.close(write)
@@ -29,18 +34,18 @@ def upload_to_ibroadcast(username, password, work_dir):
         str(Path(os.getcwd()) / 'ibroadcast-uploader.jar'),
         username,
         password,
-    ], cwd=str(work_dir), stdin=read)
+    ], cwd=audiopath.parent, stdin=read)
 
 
 def handler(event, context):
     username = os.environ['USERNAME']
     password = os.environ['PASSWORD']
     work_dir = Path(os.environ['WORK_DIR'])
-    bucket, key = get_bucket_and_key(event)
 
-    audiopath = work_dir / key
+    bucket, key = get_bucket_and_key(event)
+    audiopath = get_audiopath(work_dir, key)
 
     download_from_s3(bucket, key, audiopath)
-    upload_to_ibroadcast(username, password, work_dir)
+    upload_to_ibroadcast(username, password, audiopath)
 
     return None
