@@ -6,3 +6,4 @@ AWS Lambda function processing S3 audio file upload events and transmits them to
 
 * `python3`
 * project.ibroadcast.com[iBroadcast Java uploader]
+** Needed to recompile the JAR and add `.opus` as a supported extension.
