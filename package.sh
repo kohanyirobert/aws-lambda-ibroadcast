@@ -1,3 +1,3 @@
 #! /bin/sh
-rm package.zip
-zip -r package.zip ibroadcast-uploader.jar handler.py
+rm -vf package-*.zip
+zip -r package-$(basename $(pwd))-$(cat VERSION).zip VERSION ibroadcast-uploader.jar handler.py
