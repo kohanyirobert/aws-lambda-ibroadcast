@@ -22,10 +22,6 @@ def download_from_s3(s3, bucket, key, audiopath):
     s3.meta.client.download_file(bucket, key, str(audiopath))
 
 
-def delete_from_s3(s3, bucket, key):
-    s3.Object(bucket, key).delete()
-
-
 def upload_to_ibroadcast(username, password, audiopath):
     read, write = os.pipe()
     os.write(write, b'U')
@@ -51,6 +47,5 @@ def handler(event, context):
     s3 = boto3.resource('s3')
     download_from_s3(s3, bucket, key, audiopath)
     upload_to_ibroadcast(username, password, audiopath)
-    delete_from_s3(s3, bucket, key)
 
     return None
